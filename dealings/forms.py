@@ -1,6 +1,10 @@
 from django import forms
+from django.contrib.admin import widgets as adminwidget
+from .models import Visualization
 
-class HelloForm(forms.Form):
-    name = forms.CharField(label='name')
-    money = forms.FloatField(label='money')
-    day = forms.DateField(label='day')
+
+
+class MoneyForm(forms.ModelForm):
+    class Meta:
+        model = Visualization
+        fields = ['name', 'money', 'day']

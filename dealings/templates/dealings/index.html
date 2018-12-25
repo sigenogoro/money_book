@@ -1,16 +1,26 @@
+{% load static %}
 <!doctype html>
 <html lang="ja">
     <head>
         <meta charset="utf-8">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="{% static 'dealings/css/style.css' %}">
         <title>{{title}}</title>
     </head>
     <body>
         <h1>{{title}}</h1>
-        <p>{{message|safe}}</p>
-        <form action="{% url 'index' %}" method="post">
-            {% csrf_token %}
-            {{ form }}
-            <input type="submit" value="click">
-        </form>
+        <h3>目標貯金金額まで {{ total_saving }}円</h3>
+        <table>
+        {% for item in data %}
+            <tr>
+                <td>{{item}}</td>
+                <td><a href="{% url 'edit' item.id %}">Edit</a></td>
+                <td><a href="{% url 'delete' item.id %}">Datele</a></td>
+            </tr>
+        {% endfor %}
+            <td><a href="{% url 'create' %}">Create</a></td>
+            <td><img src="dealings/charts/simple2.png" alt=""></td>
+        </table>
     </body>
 </html>

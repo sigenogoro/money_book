@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <title>{{tile}}</title>
+    </head>
+    <body>
+        <form action="{% url 'delete' id %}" method="post">
+            {% csrf_token %}
+            <p>Are you sure you want to delete?</p>
+            <tr><th></th><td><input type="submit" value="click"></td></tr>
+        </form>
+    </body>
+</html>
