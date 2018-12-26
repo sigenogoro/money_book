@@ -8,11 +8,14 @@ from django.views.generic.edit import DeleteView
 # Create your views here.
 def index(request):
     data = Visualization.objects.all()
+
     params = {
         'title': 'Money Index',
         'total_saving': 5000,
-        'data': data
+        'data': data,
+        'data_list': change_list(data)
     }
+    print(params)
     return render(request, 'dealings/index.html', params)
 
 def create(request):
@@ -52,25 +55,7 @@ def delete(request, num):
     }
     return render(request, 'dealings/delete.html', params)
 
-def make_chart(request):
-    import django
-    import matplotlib.pyplot as plt
-    from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-    datas = [20, 30, 10]
-    labels = ['Wine', 'Sake', 'Beer']
-    colors = ['yellow', 'red', 'green']
-    # create figure
-    fig = plt.figure(1,figsize=(4,4))
-    ax = fig.add_subplot(111) 
-    ax.axis("equal")
-    pie = ax.pie(datas, #データ
-                 startangle=90, #円グラフ開始軸を指定
-                 labels=labels, #ラベル
-                 autopct="%1.1f%%",#パーセント表示
-                 colors=colors, #色指定
-                 counterclock=False, #逆時計回り
-                 )
-    canvas=FigureCanvas(fig)
-    response=django.http.HttpResponse(content_type='image/png')
-    canvas.print_png(response)
-    return response
+def change_list(data):
+    a = [i.money for i in data]
+    print(a)
+    return a
