@@ -1,22 +1,25 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Visualization
-from .forms import MoneyForm
+from .models import Visualization, Income_visualization
+from .forms import MoneyForm, IncomeForm
 from django.shortcuts import redirect
 from django.views.generic.edit import DeleteView
-
+import datetime
 # Create your views here.
 def index(request):
     data = Visualization.objects.all()
+    income = Income_visualization.objects.all()
 
     params = {
-        'title': 'Money Index',
-        'total_saving': 5000,
+        'day': datetime.datetime.today().strftime("%Y/%m/%d"),
+        'total_saving': total(data, income),
         'data': data,
-        'data_list': change_list(data)
+        'income_data': income,
+        'data_list': cost_list(data),
+        'data_income': income_list(income)
     }
-    print(params)
     return render(request, 'dealings/index.html', params)
+
 
 def create(request):
     if request.method == 'POST':
@@ -29,6 +32,7 @@ def create(request):
         'form': MoneyForm()
     }
     return render(request, 'dealings/create.html', params)
+
 
 def edit(request, num):
     get_model_value = Visualization.objects.get(id=num)
@@ -43,6 +47,7 @@ def edit(request, num):
     }
     return render(request, 'dealings/edit.html', params)
 
+
 def delete(request, num):
     get_model_value = Visualization.objects.get(id=num)
     if request.method == 'POST':
@@ -55,7 +60,73 @@ def delete(request, num):
     }
     return render(request, 'dealings/delete.html', params)
 
-def change_list(data):
-    a = [i.money for i in data]
-    print(a)
-    return a
+
+def income_create(request):
+    if request.method == 'POST':
+        income_add_info = Income_visualization()
+        income_info = IncomeForm(request.POST, instance=income_add_info)
+        income_info.save()
+        return redirect(to='/dealings')
+    params = {
+        'title': 'Income Info',
+        'form': IncomeForm()
+    }
+    return render(request, 'dealings/income_create.html', params)
+
+
+def income_edit(request, num):
+    get_model_value = Income_visualization.objects.get(id=num)
+    if (request.method == 'POST'):
+        money_info = IncomeForm(request.POST, instance = get_model_value)
+        money_info.save()
+        return redirect(to='/dealings')
+    params = {
+        'title': 'Hello',
+        'id': num,
+        'form': IncomeForm(instance = get_model_value)
+    }
+    return render(request, 'dealings/income_edit.html', params)
+
+
+def income_delete(request, num):
+    get_model_value = Income_visualization.objects.get(id=num)
+    if request.method == 'POST':
+        get_model_value.delete()
+        return redirect(to='/dealings')
+    params = {
+        'title': 'Hello',
+        'id': num,
+        'obj': get_model_value
+    }
+    return render(request, 'dealings/income_delete.html', params)
+
+
+
+
+
+def cost_list(data):
+    cost_dict = {}
+    for cost_info in data:
+        if cost_info.name in cost_dict:
+            cost_dict[cost_info.name] += cost_info.money
+        else:
+            cost_dict[cost_info.name] = cost_info.money
+    return list(cost_dict.values())
+
+
+def income_list(income):
+    income_dict = {}
+    for income_info in income:
+        if income_info.name in income_dict:
+            income_dict[income_info.name] += income_info.income
+        else:
+            income_dict[income_info.name] = income_info.income
+    return list(income_dict.values())
+
+
+def total(data, income):
+    income_sum = sum(income_list(income))
+    cost_sum = sum(cost_list(data))
+
+    total_saving = 70000 - (income_sum - cost_sum)
+    return int(total_saving)

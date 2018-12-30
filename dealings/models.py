@@ -14,3 +14,13 @@ class Visualization(models.Model):
     def __str__(self):
         return self.name + ':' + str(self.money) + '：' + str(self.day)
 
+class Income_visualization(models.Model):
+    income_name = (
+        ('固定収入','固定収入'),
+        ('変動収入', '変動収入')
+    )
+    name = models.CharField(choices=income_name, max_length=100, default=0)
+    income = models.FloatField(default=0)
+
+    def __str__(self):
+        return self.name + ':' + str(self.income)

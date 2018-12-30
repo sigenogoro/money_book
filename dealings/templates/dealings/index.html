@@ -3,26 +3,36 @@
 <html lang="ja">
     <head>
         <meta charset="utf-8">
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
         <link rel="stylesheet" type="text/css" href="{% static 'dealings/css/style.css' %}">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
         <title>{{title}}</title>
     </head>
     <body>
-        <h1>{{title}}</h1>
+        <h1>{{day}}</h1>
         <h3>目標貯金金額まで {{ total_saving }}円</h3>
-        <table>
-        {% for item in data %}
-            <tr>
-                <td>{{item}}</td>
-                <td><a href="{% url 'edit' item.id %}">Edit</a></td>
-                <td><a href="{% url 'delete' item.id %}">Datele</a></td>
-            </tr>
-        {% endfor %}
-            <td><a href="{% url 'create' %}">Create</a></td>
+        <table class="table table-striped table-bordered">
+            {% for item in data %}
+                <tr>
+                    <td class="row-index">{{item}}</td>
+                    <td><a href="{% url 'edit' item.id %}">Edit</a></td>
+                    <td><a href="{% url 'delete' item.id %}">Datele</a></td>
+                </tr>
+            {% endfor %}
+        <table class="table table-striped table-bordered" width="10px">
+            {% for item in income_data %}
+                <tr>
+                    <td>{{item}}</td>
+                    <td><a href="{% url 'income_edit' item.id %}">Edit</a></td>
+                    <td><a href="{% url 'income_delete' item.id %}">Datele</a></td>
+                </tr>
+            {% endfor %}
         </table>
-        <canvas id='chart-sample'></canvas>
+            <td><a href="{% url 'create' %}" class="btn btn-primary btn-sm my-3">Create</a></td>
+            <td><a href="{% url 'income' %}" class="btn btn-primary btn-sm my-3">Income_Create</a></td>
+        </table>
+        <canvas id='chart-sample' height="50px"></canvas>
+        <canvas id='chart-income' height="50px"></canvas>
 
 
 
@@ -33,16 +43,22 @@
             var myRadarChart = new Chart(ctx, {
                 type: 'pie',
                 data: {
-                    labels: ['支払'],
+                    labels: ['消費','投資','浪費'],
                     datasets: [{
-                        label: ['支出','a','b','c'],
+                        label: ['支出'],
                         data:{{data_list}},
-                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                        borderColor: 'rgba(255, 99, 132, 0.9)',
-                        pointBackgroundColor: 'rgba(255, 99, 132, 0.9)',
-                        pointBorderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 3,
-                        pointRadius: 3,
+                    }],
+                }
+            });
+
+            var ctx = document.getElementById("chart-income");
+            var myRadarChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['固定収入','変動収入'],
+                    datasets: [{
+                        label: ['固定収入','変動収入'],
+                        data:{{data_income}},
                     }],
                 }
             });
