@@ -13,8 +13,8 @@ def index(request):
     params = {
         'day': datetime.datetime.today().strftime("%Y/%m/%d"),
         'total_saving': total(data, income),
-        'data': data,
-        'income_data': income,
+        'data': change_dict(data),
+        'income_data': change_dict2(income),
         'data_list': cost_list(data),
         'data_income': income_list(income)
     }
@@ -101,6 +101,23 @@ def income_delete(request, num):
     return render(request, 'dealings/income_delete.html', params)
 
 
+def change_dict(data):
+    cost_dict = {}
+    for cost_info in data:
+        if cost_info.name in cost_dict:
+            cost_dict[cost_info.name] += cost_info.money
+        else:
+            cost_dict[cost_info.name] = cost_info.money
+    return cost_dict
+
+def change_dict2(data):
+    income_dict = {}
+    for income_info in data:
+        if income_info.name in income_dict:
+            income_dict[income_info.name] += income_info.income
+        else:
+            income_dict[income_info.name] = income_info.income
+    return income_dict
 
 
 

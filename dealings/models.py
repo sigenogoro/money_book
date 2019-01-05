@@ -4,7 +4,7 @@ from django.db import models
 class Visualization(models.Model):
     choice_name = (
         ('消費','消費'),
-        ('浪費', '浪費'),
+        ('無駄使い', '浪費'),
         ('投資','投資')
     )
     name = models.CharField(max_length=100, choices=choice_name, default=0)
