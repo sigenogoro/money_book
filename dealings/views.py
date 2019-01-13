@@ -5,6 +5,7 @@ from .forms import MoneyForm, IncomeForm
 from django.shortcuts import redirect
 from django.views.generic.edit import DeleteView
 import datetime
+from django.db.models import Sum
 # Create your views here.
 def index(request):
     data = Visualization.objects.all()
@@ -103,12 +104,17 @@ def income_delete(request, num):
 
 def change_dict(data):
     cost_dict = {}
+    total_sum = Visualization.objects.aggregate(Sum('money'))['money__sum']
     for cost_info in data:
         if cost_info.name in cost_dict:
-            cost_dict[cost_info.name] += cost_info.money
+            cost_dict[cost_info.name][0] += int(cost_info.money)
         else:
-            cost_dict[cost_info.name] = cost_info.money
+            cost_dict[cost_info.name] = [0,0]
+            cost_dict[cost_info.name][0] += (int(cost_info.money))
+        for key, val in cost_dict.items():
+            cost_dict[key][1] = (cost_dict[key][0] / total_sum) * 100
     return cost_dict
+
 
 def change_dict2(data):
     income_dict = {}
